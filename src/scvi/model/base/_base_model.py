@@ -701,21 +701,7 @@ class BaseModelClass(metaclass=BaseModelMetaClass):
 
         _validate_var_names(adata, var_names)
 
-        registry = attr_dict.pop("registry_")
-        if _MODEL_NAME_KEY in registry and registry[_MODEL_NAME_KEY] != cls.__name__:
-            raise ValueError("It appears you are loading a model from a different class.")
-
-        if _SETUP_ARGS_KEY not in registry:
-            raise ValueError(
-                "Saved model does not contain original setup inputs. "
-                "Cannot load the original setup."
-            )
-
-        # Calling ``setup_anndata`` method with the original arguments passed into
-        # the saved model. This enables simple backwards compatibility in the case of
-        # newly introduced fields or parameters.
-        method_name = registry.get(_SETUP_METHOD_NAME, "setup_anndata")
-        getattr(cls, method_name)(adata, source_registry=registry, **registry[_SETUP_ARGS_KEY])
+        # Setup anndata here
 
         model = _initialize_model(cls, adata, attr_dict)
         model.module.on_load(model)
